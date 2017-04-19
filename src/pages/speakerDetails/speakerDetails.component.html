@@ -1,0 +1,19 @@
+<ion-header>
+    <ion-navbar>
+        <button menuToggle="left">
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    </ion-navbar>
+</ion-header>
+
+
+
+<ion-content padding>
+    <ion-item>
+        <ion-avatar item-left>
+            <img [src]="'https://jonthebeach.com/' + speaker.imageUrl" style="float:left" />
+        </ion-avatar>
+        <h2>{{speaker.name}}</h2>
+    </ion-item>
+    <p [innerHTML]="speaker.description"></p>
+</ion-content>

@@ -1,0 +1,42 @@
+<ion-header>
+    <div padding>
+        <ion-segment [(ngModel)]="sessionDay">
+            <ion-segment-button value="18th">
+                Thursday
+            </ion-segment-button>
+            <ion-segment-button value="19th">
+                Friday
+            </ion-segment-button>
+        </ion-segment>
+    </div>
+    <div>
+        <ion-item>
+            <ion-label>Show all</ion-label>
+            <ion-checkbox [(ngModel)]="showAll"></ion-checkbox>
+        </ion-item>
+    </div>
+</ion-header>
+<ion-content class="page-home">
+    <ion-list>
+        <ng-template ngFor [ngForOf]="currentSessions" let-timeSessions>
+            <ion-list-header>
+                {{timeSessions.time}}
+            </ion-list-header>
+            <ion-item *ngFor="let session of timeSessions.sessions">
+                <ion-avatar item-left (click)="openSpeakerDetails(speakers[session.speakerId])">
+                    <img [src]="'https://jonthebeach.com/' + speakers[session.speakerId]?.imageUrl" />
+                </ion-avatar>
+                <h2 [innerHTML]="session.title" (click)="openSessionDetails(session)"></h2>
+                <h3 [innerHTML]="speakers[session.speakerId]?.name">
+                </h3>
+                <p [innerHTML]="session.description" (click)="openSessionDetails(session)"></p>
+                <div>
+                    <ion-icon name="heart" class="favoriteIcon" [ngClass]="{'favorite' : session.favorite}" (click)="markAsFavorite(session)"></ion-icon>
+                    <span class="location">{{session.location}}</span>
+                </div>
+            </ion-item>
+
+        </ng-template>
+    </ion-list>
+
+</ion-content>

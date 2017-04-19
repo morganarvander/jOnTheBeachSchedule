@@ -1,0 +1,26 @@
+<div class="login">
+    <div class="header">
+        <div>
+            <img src="../../assets/header-logo.png" />
+        </div>
+
+        <div *ngIf="authenticated">
+            <p>
+                Authorizing...
+            </p>
+        </div>
+        <div *ngIf="!authenticated">
+            <p>
+                Login using Google in order to manage your sessions for the upcoming conference
+            </p>
+            <a href="# " (click)="login() ">
+                <img src="../../assets/login/google2.png " />
+            </a>
+        </div>
+    </div>
+    <div class="wave ">
+    </div>
+    <div class="bottom ">
+    </div>
+
+</div>
