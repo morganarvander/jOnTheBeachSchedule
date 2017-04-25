@@ -1,10 +1,15 @@
+import { Subscribable } from 'rxjs/Observable';
+import { ArrayObservable } from 'rxjs/observable/ArrayObservable';
+import { Observable, Subscription } from 'rxjs/Rx';
+import { FirebaseAuthState } from 'angularfire2/auth';
+import { LoginComponent } from '../login/login.component';
 import { SpeakerDetails } from '../speakerDetails/speakerDetails.component';
 import { ViewChild } from '@angular/core';
 import { SessionDetails } from '../sessionDetails/sessionDetails';
 import { parseTime, parseTimeInterval } from '../../utils';
 import { ISession, ISpeaker, IUserData } from '../../models';
 import { Component } from '@angular/core';
-import { Content, NavController } from 'ionic-angular';
+import { Content, Loading, LoadingController, NavController } from 'ionic-angular';
 import { AngularFire } from "angularfire2";
 import { from } from 'linq';
 
@@ -27,7 +32,7 @@ export class HomePage {
     sessions: ISession[]
   }[];
 
-  @ViewChild(Content) 
+  @ViewChild(Content)
   private content: Content;
 
   private _sessionDay = "18th";
@@ -35,15 +40,31 @@ export class HomePage {
   private speakers: ISpeaker[] = [];
   private allSessions: ISession[];
   private userData: IUserData;
+  private loading : Loading;
+
+  private afSubscriptions : Subscription[] = [];
 
   constructor(
     public navCtrl: NavController,
-    private af: AngularFire) {      
+    private loadingController: LoadingController,
+    private af: AngularFire) {
     try {
-      this.fetchUserData();
-      this.fetchSessions();
-      this.fetchSpeakers();
-
+      this.loading = this.loadingController.create({
+        content: 'Loading sessions...'
+      });
+      this.loading.present();
+      this.af.auth.subscribe((state)=>{
+        if (state==null){
+          return;
+        }
+        this.userData = {
+          uid: state.uid,
+          favoriteSessions: []
+        }
+        this.afSubscriptions.push(this.fetchUserData());
+        this.afSubscriptions.push(this.fetchSessions());
+        this.afSubscriptions.push(this.fetchSpeakers());        
+      });
     } catch (err) {
       console.log(err);
     }
@@ -59,7 +80,7 @@ export class HomePage {
   get sessionDay(): string {
     return this._sessionDay;
   }
-  
+
   /* PROPERTY showAll */
   get showAll(): boolean {
     return this._showAll;
@@ -102,8 +123,8 @@ export class HomePage {
   }
 
   /* Retrives all speakers from server */
-  private fetchSpeakers() {
-    this.af.database.list("speakers").subscribe((speakers) => {
+  private fetchSpeakers() : Subscription{
+    return this.af.database.list("speakers").subscribe((speakers) => {
       for (let speaker of speakers) {
         this.speakers[speaker.speakerId] = speaker;
       }
@@ -111,23 +132,20 @@ export class HomePage {
   }
 
   /* Retrives all sessions from server */
-  private fetchSessions() {
-    this.af.database.list("sessions").subscribe((sessions: ISession[]) => {
+  private fetchSessions() : Subscription{
+    return this.af.database.list("sessions").subscribe((sessions: ISession[]) => {
       this.extractTimeParts(sessions);
       this.allSessions = sessions;
       this.sessions = this.buildSessions(sessions);
       this.sessionDay = this._sessionDay;
       this.setupFavorites();
+      this.loading.dismiss();
     });
   }
 
   /* Retrives the userdata (i.e favorite sessions), for the current user */
-  private fetchUserData() {
-    this.userData = {
-      uid: this.af.auth.getAuth().uid,
-      favoriteSessions: []
-    }
-    this.af.database.object('users/' + this.af.auth.getAuth().uid).subscribe((userData) => {
+  private fetchUserData() : Subscription {    
+    return this.af.database.object('users/' + this.userData.uid).subscribe((userData) => {
       if (userData.$exists()) {
         this.userData = userData;
         this.setupFavorites();
@@ -152,16 +170,23 @@ export class HomePage {
     this.af.database.object('users/' + this.userData.uid).set(this.userData);
   }
 
-  public openSessionDetails(session:ISession){
-    this.navCtrl.push(SessionDetails,{
-      session:session, 
-      speaker:this.speakers[session.speakerId],
-      parent : this
+  public openSessionDetails(session: ISession) {
+    this.navCtrl.push(SessionDetails, {
+      session: session,
+      speaker: this.speakers[session.speakerId],
+      parent: this
     })
   }
 
-  public openSpeakerDetails(speaker:ISpeaker){
-    this.navCtrl.push(SpeakerDetails,{speaker:speaker})    
+  public openSpeakerDetails(speaker: ISpeaker) {
+    this.navCtrl.push(SpeakerDetails, { speaker: speaker })
+  }
+
+  public signout() {
+    this.afSubscriptions.forEach(sub=>{
+      sub.unsubscribe();
+    })
+    this.navCtrl.setRoot(LoginComponent, { signout: true });
   }
 
 }

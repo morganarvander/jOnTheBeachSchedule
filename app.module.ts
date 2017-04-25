@@ -1,4 +1,3 @@
-import { FirebaseApp } from 'angularfire2/tokens';
 import { SpeakerDetails } from '../pages/speakerDetails/speakerDetails.component';
 import { SessionDetails } from '../pages/sessionDetails/sessionDetails';
 import { AuthService } from '../auth/authService';
@@ -16,8 +15,6 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 
 import { AngularFireModule } from 'angularfire2';
 import { firebaseConfig } from "./firebaseConfig";
-
-import { FIREBASE_PROVIDERS, defaultFirebase } from 'angularfire2';
 
 @NgModule({
   declarations: [
@@ -41,11 +38,10 @@ import { FIREBASE_PROVIDERS, defaultFirebase } from 'angularfire2';
     SpeakerDetails
   ],
   providers: [
-    FIREBASE_PROVIDERS,
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    AuthService    
+    AuthService
   ]
 })
 export class AppModule {}

@@ -9,15 +9,15 @@
 
 
 <ion-content padding>
-    <ion-item (click)="openSpeakerDetails(speaker)">
-        <ion-avatar item-left>
+    <ion-item>
+        <ion-avatar item-left (click)="openSpeakerDetails(speaker)">
             <img [src]="'https://jonthebeach.com/' + speaker.imageUrl" style="float:left" />
         </ion-avatar>
         <h2>{{session.location}} {{session.time}}</h2>
         <h3>{{speaker.name}}</h3>
+        <ion-icon name='star' item-right padding [ngClass]="{'favorite' : session.favorite}" (click)="markAsFavorite(session)"></ion-icon>
     </ion-item>
     <h4>
-        <ion-icon name="heart" class="favoriteIcon" [ngClass]="{'favorite' : session.favorite}" (click)="markAsFavorite(session)"></ion-icon>
         <p [innerHTML]="session.title"></p>
     </h4>
     <p [innerHTML]="session.description"></p>

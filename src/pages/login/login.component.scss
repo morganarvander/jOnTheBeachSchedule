@@ -14,7 +14,7 @@
     }
     .wave {
         height: 22px;
-        background-image: url('../../assets/wave.png');
+        background-image: url('../assets/wave.png');
         background-size: contain;
         background-position: center bottom;
     }
@@ -24,5 +24,21 @@
     }
     input {
         padding: 10px;
+    }
+    h3,
+    h4,
+    h5 {
+        color: white;
+    }
+    .crosscutText {
+        .authorInfo {
+            color: white;
+            text-align: center;
+            vertical-align: bottom;
+            max-height: 5rem;
+            position: absolute;
+            bottom: 2rem;
+            width: 100%;
+        }
     }
 }

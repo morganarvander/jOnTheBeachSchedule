@@ -1,26 +1,36 @@
 <div class="login">
     <div class="header">
         <div>
-            <img src="../../assets/header-logo.png" />
+            <img src="assets/header-logo.png" />
         </div>
-
+        <h3>
+            Session schedule
+        </h3>
+        <h5>Málaga 2017, 17th-19th May</h5>
         <div *ngIf="authenticated">
             <p>
                 Authorizing...
             </p>
         </div>
         <div *ngIf="!authenticated">
+            <p>&nbsp;</p>
             <p>
                 Login using Google in order to manage your sessions for the upcoming conference
             </p>
             <a href="# " (click)="login() ">
-                <img src="../../assets/login/google2.png " />
+                <img src="assets/login/google2.png " />
             </a>
         </div>
     </div>
     <div class="wave ">
     </div>
-    <div class="bottom ">
+    <div class="bottom">
+        <div class="crosscutText">
+            <div class="authorInfo">
+                Crosscut Solutions AB
+                <br/> Stockholm, 2017
+            </div>
+        </div>
     </div>
 
 </div>

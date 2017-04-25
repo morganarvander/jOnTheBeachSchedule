@@ -31,9 +31,9 @@
                 </h3>
                 <p [innerHTML]="session.description" (click)="openSessionDetails(session)"></p>
                 <div>
-                    <ion-icon name="heart" class="favoriteIcon" [ngClass]="{'favorite' : session.favorite}" (click)="markAsFavorite(session)"></ion-icon>
                     <span class="location">{{session.location}}</span>
                 </div>
+                <ion-icon name='star' item-right padding [ngClass]="{'favorite' : session.favorite}" (click)="markAsFavorite(session)"></ion-icon>
             </ion-item>
 
         </ng-template>

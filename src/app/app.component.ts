@@ -1,3 +1,4 @@
+import { FirebaseAuthState } from 'angularfire2/auth';
 import { AuthService } from '../auth/authService';
 import { LoginComponent } from '../pages/login/login.component';
 import { Component, ViewChild } from '@angular/core';
@@ -15,14 +16,14 @@ export class MyApp {
 
   rootPage: any = LoginComponent;
 
-  pages: Array<{title: string, component: any}>;
+  pages: Array<{ title: string, component: any }>;
 
   constructor(
-    public platform: Platform, 
-    public statusBar: StatusBar, 
-    public splashScreen: SplashScreen, 
-    private authService: AuthService,  
-    ) {
+    public platform: Platform,
+    public statusBar: StatusBar,
+    public splashScreen: SplashScreen,
+    private authService: AuthService,
+  ) {
     this.initializeApp();
   }
 
@@ -36,10 +37,13 @@ export class MyApp {
   }
 
   openPage(page) {
-    if (!this.authService.authenticated)
-    {
-      this.nav.setRoot(LoginComponent);
-    }
-    this.rootPage = HomePage;
+    this.authService.auth$.subscribe((state: FirebaseAuthState) => {
+      if (state.auth.isAnonymous) {
+        this.nav.setRoot(LoginComponent);
+      }
+      else{
+        this.rootPage = HomePage;
+      }
+    });
   }
 }
