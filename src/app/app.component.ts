@@ -1,3 +1,4 @@
+import { AppInsightsInstrumentationKey } from './firebaseConfig';
 import { FirebaseAuthState } from 'angularfire2/auth';
 import { AuthService } from '../auth/authService';
 import { LoginComponent } from '../pages/login/login.component';
@@ -7,6 +8,7 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
 import { HomePage } from '../pages/home/home';
+import { AppInsightsService } from "ng2-appinsights";
 
 @Component({
   templateUrl: 'app.html'
@@ -23,16 +25,23 @@ export class MyApp {
     public statusBar: StatusBar,
     public splashScreen: SplashScreen,
     private authService: AuthService,
+    private appinsightsService : AppInsightsService
   ) {
     this.initializeApp();
+    this.appinsightsService.Init({
+        instrumentationKey: AppInsightsInstrumentationKey,
+        verboseLogging: true
+    });
   }
 
   initializeApp() {
     this.platform.ready().then(() => {
-      // Okay, so the platform is ready and our plugins are available.
-      // Here you can do any higher level native things you might need.
       this.statusBar.styleDefault();
       this.splashScreen.hide();
+      this.appinsightsService.trackEvent(
+            'AppStart'            
+        );
+      this.appinsightsService.flush();
     });
   }
 

@@ -15,10 +15,13 @@
         <div *ngIf="!authenticated">
             <p>&nbsp;</p>
             <p>
-                Login using Google in order to manage your sessions for the upcoming conference
+                Login using Google or Facebook in order to manage your sessions for the upcoming conference
             </p>
             <a href="# " (click)="login() ">
                 <img src="assets/login/google2.png " />
+            </a>
+            <a href="# " (click)="loginWithFacebook() ">
+                <img src="assets/login/facebook.png " />
             </a>
         </div>
     </div>

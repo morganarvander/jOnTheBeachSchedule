@@ -18,6 +18,7 @@ import { AngularFireModule } from 'angularfire2';
 import { firebaseConfig } from "./firebaseConfig";
 
 import { FIREBASE_PROVIDERS, defaultFirebase } from 'angularfire2';
+import { AppInsightsModule } from 'ng2-appinsights';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { FIREBASE_PROVIDERS, defaultFirebase } from 'angularfire2';
   imports: [
     BrowserModule,
     IonicModule.forRoot(MyApp),    
-    AngularFireModule.initializeApp(firebaseConfig)
+    AngularFireModule.initializeApp(firebaseConfig),
+    AppInsightsModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [

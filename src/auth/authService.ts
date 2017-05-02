@@ -1,3 +1,4 @@
+import { PROVIDER } from '@ionic/app-scripts/dist';
 import { webClientId } from '../app/firebaseConfig';
 import { LoginComponent } from '../pages/login/login.component';
 import { Inject } from '@angular/core';
@@ -40,6 +41,20 @@ export class AuthService {
               });
       }).catch((error) => {
         subject.error(error)
+      });
+    return subject;
+  }
+
+
+  signInWithFacebook(): Observable<any> {
+    var subject = new Subject();
+    var provider = new firebase.auth.FacebookAuthProvider();
+    firebase.auth().signInWithPopup(provider)
+      .then((user)=>{
+        subject.next();
+      })
+      .catch((error)=>{
+        subject.error(error);
       });
     return subject;
   }

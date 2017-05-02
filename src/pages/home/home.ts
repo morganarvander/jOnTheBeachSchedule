@@ -9,16 +9,18 @@ import { SessionDetails } from '../sessionDetails/sessionDetails';
 import { parseTime, parseTimeInterval } from '../../utils';
 import { ISession, ISpeaker, IUserData } from '../../models';
 import { Component } from '@angular/core';
-import { Content, Loading, LoadingController, NavController } from 'ionic-angular';
+import { Content, Loading, LoadingController, NavController, ToastController } from 'ionic-angular';
 import { AngularFire } from "angularfire2";
 import { from } from 'linq';
+import { AppInsightsService, SeverityLevel } from "ng2-appinsights";
 
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
 })
 export class HomePage {
-
+    
+  
   private sessions: {
     date: string,
     sessions: {
@@ -47,8 +49,12 @@ export class HomePage {
   constructor(
     public navCtrl: NavController,
     private loadingController: LoadingController,
+    private toastController : ToastController,
+    private appinsightsService : AppInsightsService,
     private af: AngularFire) {
     try {
+      
+        
       this.loading = this.loadingController.create({
         content: 'Loading sessions...'
       });
@@ -61,12 +67,18 @@ export class HomePage {
           uid: state.uid,
           favoriteSessions: []
         }
+        
+        this.appinsightsService.trackEvent(
+            'NavHomeEvent',
+            { uid: state.uid }
+        );
+        this.appinsightsService.flush();
         this.afSubscriptions.push(this.fetchUserData());
         this.afSubscriptions.push(this.fetchSessions());
         this.afSubscriptions.push(this.fetchSpeakers());        
       });
     } catch (err) {
-      console.log(err);
+      this.handleError(err);
     }
   }
 
@@ -90,6 +102,21 @@ export class HomePage {
     this._showAll = value;
     this.sessions = this.buildSessions(this.showAll ? this.allSessions : this.allSessions.filter(a => a.favorite));
     this.filterSessionsByDay();
+  }
+
+  private handleError(error : any){
+    this.appinsightsService.trackException(
+            new Error('Sample Error'),
+            'SampleFunctionName',
+            { sampleProp: 'sampleProp' },
+            { sampleMeasurement: 1 },
+            SeverityLevel.Error
+        );
+
+    this.toastController.create({
+      message: 'Error occured ' + error,
+      duration: 1500
+    }).present();
   }
 
   /* Parses a datestring like 08:00-09:00 into two separate Date objects */
@@ -150,7 +177,7 @@ export class HomePage {
         this.userData = userData;
         this.setupFavorites();
       }
-    });
+    }, this.handleError);
   }
 
   /* Sets the favorite flag according to the users choice */

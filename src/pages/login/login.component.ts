@@ -55,6 +55,12 @@ export class LoginComponent implements OnInit {
     });
   }
 
+  loginWithFacebook(){
+    this.authService.signInWithFacebook().subscribe((userInfo)=>{
+      
+    });
+  }
+
   public signout() {
     this.authService.signOut();
   }
