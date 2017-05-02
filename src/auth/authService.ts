@@ -1,4 +1,3 @@
-import { PROVIDER } from '@ionic/app-scripts/dist';
 import { webClientId } from '../app/firebaseConfig';
 import { LoginComponent } from '../pages/login/login.component';
 import { Inject } from '@angular/core';
