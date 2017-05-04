@@ -57,7 +57,8 @@ export class LoginComponent implements OnInit {
 
   loginWithFacebook(){
     this.authService.signInWithFacebook().subscribe((userInfo)=>{
-      
+      this.authenticated = userInfo != null;
+      this.nav.setRoot(HomePage);
     });
   }
 
