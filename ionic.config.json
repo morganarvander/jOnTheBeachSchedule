@@ -2,5 +2,14 @@
   "name": "jOnTheBeach",
   "app_id": "",
   "v2": true,
-  "typescript": true
+  "typescript": true,
+  "watch": {
+    "sass": ["scss/**/*.scss"],
+    "html": ["www/**/*.html"],
+    "livereload": [
+      "www/**/*.html",
+      "www/**/*.js",
+      "www/**/*.css"
+    ]
+  }
 }
