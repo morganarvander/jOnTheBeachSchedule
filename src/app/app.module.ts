@@ -1,3 +1,4 @@
+import { ContactPage } from '../pages/contact/contact.component';
 import { FirebaseApp } from 'angularfire2/tokens';
 import { SpeakerDetails } from '../pages/speakerDetails/speakerDetails.component';
 import { SessionDetails } from '../pages/sessionDetails/sessionDetails';
@@ -27,6 +28,7 @@ import { IonicStorageModule } from "@ionic/storage";
     HomePage,
     SessionDetails,
     LoginComponent,
+    ContactPage,
     SpeakerDetails
   ],
   imports: [
@@ -42,7 +44,8 @@ import { IonicStorageModule } from "@ionic/storage";
     HomePage,
     SessionDetails,
     LoginComponent,
-    SpeakerDetails
+    SpeakerDetails,
+    ContactPage
   ],
   providers: [
     FIREBASE_PROVIDERS,

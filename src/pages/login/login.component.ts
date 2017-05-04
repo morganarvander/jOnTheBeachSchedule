@@ -11,7 +11,7 @@ import { GooglePlus } from '@ionic-native/google-plus';
   selector: 'login',
   templateUrl: './login.component.html',
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit{
 
   protected username: string;
   protected password: string;
@@ -28,19 +28,18 @@ export class LoginComponent implements OnInit {
     try {
       this.authenticated = true;
       this.platform.ready().then(() => {
-        debugger;
         let doSignOut = this.navParams.get("signout");
         if (doSignOut) {
           this.signout();
-          this.authenticated = false;          
+          this.authenticated = false;
         }
         else {
           this.authService.trySilentLogin().subscribe((userData) => {
             this.nav.setRoot(HomePage);
-          },(error)=>{
+          }, (error) => {
             this.authenticated = false;
           })
-          
+
         }
       });
     } catch (err) {
@@ -50,13 +49,15 @@ export class LoginComponent implements OnInit {
 
   public login() {
     this.authService.signInWithGoogle().subscribe(userInfo => {
+      console.log("userinfo",userInfo);
       this.authenticated = userInfo != null;
       this.nav.setRoot(HomePage);
     });
   }
 
-  loginWithFacebook(){
-    this.authService.signInWithFacebook().subscribe((userInfo)=>{
+  loginWithFacebook() {
+    this.authService.signInWithFacebook().subscribe((userInfo) => {
+      console.log("userinfo",userInfo);
       this.authenticated = userInfo != null;
       this.nav.setRoot(HomePage);
     });

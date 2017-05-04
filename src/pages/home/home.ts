@@ -1,3 +1,4 @@
+import { ContactPage } from '../contact/contact.component';
 import { Subscribable } from 'rxjs/Observable';
 import { ArrayObservable } from 'rxjs/observable/ArrayObservable';
 import { Observable, Subscription } from 'rxjs/Rx';
@@ -8,7 +9,7 @@ import { ViewChild } from '@angular/core';
 import { SessionDetails } from '../sessionDetails/sessionDetails';
 import { parseTime, parseTimeInterval } from '../../utils';
 import { ISession, ISpeaker, IUserData } from '../../models';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Content, Loading, LoadingController, NavController, ToastController } from 'ionic-angular';
 import { AngularFire } from "angularfire2";
 import { from } from 'linq';
@@ -18,9 +19,8 @@ import { AppInsightsService, SeverityLevel } from "ng2-appinsights";
   selector: 'page-home',
   templateUrl: 'home.html'
 })
-export class HomePage {
-    
-  
+export class HomePage implements OnDestroy, OnInit {
+
   private sessions: {
     date: string,
     sessions: {
@@ -42,44 +42,51 @@ export class HomePage {
   private speakers: ISpeaker[] = [];
   private allSessions: ISession[];
   private userData: IUserData;
-  private loading : Loading;
+  private loading: Loading;
 
-  private afSubscriptions : Subscription[] = [];
+  private afSubscriptions: Subscription[] = [];
 
   constructor(
     public navCtrl: NavController,
     private loadingController: LoadingController,
-    private toastController : ToastController,
-    private appinsightsService : AppInsightsService,
+    private toastController: ToastController,
+    private appinsightsService: AppInsightsService,
     private af: AngularFire) {
+
+  }
+
+  ngOnInit(): void {
     try {
-      
-        
       this.loading = this.loadingController.create({
         content: 'Loading sessions...'
       });
       this.loading.present();
-      this.af.auth.subscribe((state)=>{
-        if (state==null){
-          return;
-        }
-        this.userData = {
-          uid: state.uid,
-          favoriteSessions: []
-        }
-        
-        this.appinsightsService.trackEvent(
-            'NavHomeEvent',
-            { uid: state.uid }
-        );
-        this.appinsightsService.flush();
-        this.afSubscriptions.push(this.fetchUserData());
-        this.afSubscriptions.push(this.fetchSessions());
-        this.afSubscriptions.push(this.fetchSpeakers());        
-      });
+      this.afSubscriptions.push(this.af.auth.subscribe((state) => {
+        if (state == null) { return;}
+        this.userData = { uid: state.uid, favoriteSessions: []};
+        this.logToAppInsights("HomeController.init", { uid: state.uid });
+        this.startDataSubscriptions();
+      }));
     } catch (err) {
       this.handleError(err);
     }
+  }
+
+  ngOnDestroy(): void {
+    this.afSubscriptions.forEach(subscription => {
+      subscription.unsubscribe();
+    });
+  }
+
+  private logToAppInsights(title: string, data: any) {
+    this.appinsightsService.trackEvent( title, data );
+    this.appinsightsService.flush();
+  }
+
+  private startDataSubscriptions() {
+    this.afSubscriptions.push(this.fetchUserData());
+    this.afSubscriptions.push(this.fetchSessions());
+    this.afSubscriptions.push(this.fetchSpeakers());
   }
 
   /* PROPERTY sessionDay */
@@ -104,14 +111,12 @@ export class HomePage {
     this.filterSessionsByDay();
   }
 
-  private handleError(error : any){
+  private handleError(error: any) {
     this.appinsightsService.trackException(
-            new Error('Sample Error'),
-            'SampleFunctionName',
-            { sampleProp: 'sampleProp' },
-            { sampleMeasurement: 1 },
-            SeverityLevel.Error
-        );
+      new Error(error),
+      'handleError',
+      SeverityLevel.Error
+    );
 
     this.toastController.create({
       message: 'Error occured ' + error,
@@ -150,7 +155,7 @@ export class HomePage {
   }
 
   /* Retrives all speakers from server */
-  private fetchSpeakers() : Subscription{
+  private fetchSpeakers(): Subscription {
     return this.af.database.list("speakers").subscribe((speakers) => {
       for (let speaker of speakers) {
         this.speakers[speaker.speakerId] = speaker;
@@ -159,7 +164,7 @@ export class HomePage {
   }
 
   /* Retrives all sessions from server */
-  private fetchSessions() : Subscription{
+  private fetchSessions(): Subscription {
     return this.af.database.list("sessions").subscribe((sessions: ISession[]) => {
       this.extractTimeParts(sessions);
       this.allSessions = sessions;
@@ -171,7 +176,7 @@ export class HomePage {
   }
 
   /* Retrives the userdata (i.e favorite sessions), for the current user */
-  private fetchUserData() : Subscription {    
+  private fetchUserData(): Subscription {
     return this.af.database.object('users/' + this.userData.uid).subscribe((userData) => {
       if (userData.$exists()) {
         this.userData = userData;
@@ -210,10 +215,14 @@ export class HomePage {
   }
 
   public signout() {
-    this.afSubscriptions.forEach(sub=>{
-      sub.unsubscribe();
-    })
     this.navCtrl.setRoot(LoginComponent, { signout: true });
   }
 
+  openSchedule(){
+    this.navCtrl.setRoot(HomePage);
+  }
+
+  openContact(){
+    this.navCtrl.push(ContactPage);
+  }
 }

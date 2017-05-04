@@ -1,1 +1,34 @@
+<ion-menu [content]="content">
+    <ion-header text-center padding>
+        <img height="2rem" src="assets/login/facebook_circle.png" *ngIf="authService.currentUserInfo && authService.currentUserInfo.provider==='facebook'" height="20rem"
+            style="position:absolute;top:10px;">
+        <img height="2rem" src="assets/login/google_circle.png" *ngIf="authService.currentUserInfo && authService.currentUserInfo.provider==='google'" height="20rem"
+            style="position:absolute;top:10px;">
+        <img src="assets/logo.png" *ngIf="!authService.currentUserInfo" height="100px" />
+        <img [src]="authService.currentUserInfo.photoURL" *ngIf="authService.currentUserInfo" height="100px" />
+        <br/>
+        <span *ngIf="authService.currentUserInfo">
+            <h3>
+            {{authService.currentUserInfo.displayName}}
+            </h3>
+        </span>
+    </ion-header>
+    <ion-content>
+        <ion-list>
+            <button menuClose ion-item (click)="openSchedule()">
+                <ion-icon name="calendar"></ion-icon>&nbsp;
+        Schedule
+      </button>
+            <button menuClose ion-item (click)="openContact()">
+                <ion-icon name="contact"></ion-icon>&nbsp;
+        Contact
+      </button>
+            <button menuClose ion-item (click)="logout()">
+                <ion-icon name="exit"></ion-icon>&nbsp;
+        Logout
+      </button>
+        </ion-list>
+    </ion-content>
+</ion-menu>
+
 <ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>

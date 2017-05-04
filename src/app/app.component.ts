@@ -1,3 +1,4 @@
+import { ContactPage } from '../pages/contact/contact.component';
 import { AppInsightsInstrumentationKey } from './firebaseConfig';
 import { FirebaseAuthState } from 'angularfire2/auth';
 import { AuthService } from '../auth/authService';
@@ -31,7 +32,7 @@ export class MyApp {
     this.appinsightsService.Init({
         instrumentationKey: AppInsightsInstrumentationKey,
         verboseLogging: true
-    });
+    });    
   }
 
   initializeApp() {
@@ -54,5 +55,17 @@ export class MyApp {
         this.rootPage = HomePage;
       }
     });
+  }
+
+  openSchedule(){
+    this.nav.setRoot(HomePage);
+  }
+
+  openContact(){
+    this.nav.setRoot(ContactPage);
+  }
+
+  logout(){
+    this.authService.signOut().subscribe(a=>this.nav.setRoot(LoginComponent));
   }
 }
