@@ -10,10 +10,12 @@ import { SessionDetails } from '../sessionDetails/sessionDetails';
 import { parseTime, parseTimeInterval } from '../../utils';
 import { ISession, ISpeaker, IUserData } from '../../models';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Content, Loading, LoadingController, NavController, ToastController } from 'ionic-angular';
+import { Content, Loading, LoadingController, NavController, ToastController, AlertController } from 'ionic-angular';
 import { AngularFire } from "angularfire2";
 import { from } from 'linq';
 import { AppInsightsService, SeverityLevel } from "ng2-appinsights";
+import { AuthService } from "../../auth/authService";
+import firebase from 'firebase'; //needed for the GoogleAuthProvider
 
 @Component({
   selector: 'page-home',
@@ -51,6 +53,8 @@ export class HomePage implements OnDestroy, OnInit {
     private loadingController: LoadingController,
     private toastController: ToastController,
     private appinsightsService: AppInsightsService,
+    private authService: AuthService,
+    private alertCtrl: AlertController,
     private af: AngularFire) {
 
   }
@@ -61,12 +65,18 @@ export class HomePage implements OnDestroy, OnInit {
         content: 'Loading sessions...'
       });
       this.loading.present();
-      this.afSubscriptions.push(this.af.auth.subscribe((state) => {
-        if (state == null) { return;}
-        this.userData = { uid: state.uid, favoriteSessions: []};
-        this.logToAppInsights("HomeController.init", { uid: state.uid });
-        this.startDataSubscriptions();
-      }));
+      this.authService.trySilentLogin().subscribe(a => {
+        this.afSubscriptions.push(this.af.auth.subscribe((state) => {          
+          if (state == null) { return; }
+          console.log("af auth anon " + state.anonymous);
+          console.log("af auth " + state.uid);
+          this.userData = { uid: state.uid, favoriteSessions: [] };
+          this.logToAppInsights("HomeController.init", { uid: state.uid });
+          this.afSubscriptions.push(this.fetchUserData());
+          this.startDataSubscriptions();
+          this.authService.onSignOut.subscribe(()=>this.userData = { uid : '', favoriteSessions : []});
+        }));
+      });
     } catch (err) {
       this.handleError(err);
     }
@@ -79,12 +89,11 @@ export class HomePage implements OnDestroy, OnInit {
   }
 
   private logToAppInsights(title: string, data: any) {
-    this.appinsightsService.trackEvent( title, data );
+    this.appinsightsService.trackEvent(title, data);
     this.appinsightsService.flush();
   }
 
   private startDataSubscriptions() {
-    this.afSubscriptions.push(this.fetchUserData());
     this.afSubscriptions.push(this.fetchSessions());
     this.afSubscriptions.push(this.fetchSpeakers());
   }
@@ -197,9 +206,42 @@ export class HomePage implements OnDestroy, OnInit {
 
   /* Marks a session as a favorite and updates the server accordingly */
   public markAsFavorite(session: ISession) {
-    session.favorite = !session.favorite;
-    this.userData.favoriteSessions = this.allSessions.filter(a => a.favorite).map(a => a.sessionId);
-    this.af.database.object('users/' + this.userData.uid).set(this.userData);
+    if (!this.authService.currentUserInfo) {
+      this.promptForLogin();
+    }
+    else {
+      console.log("Setting fav for user " +  this.authService.currentUserInfo.uid);
+      console.log("session fav before " + session.favorite);
+      session.favorite = !session.favorite ? true : false;
+      console.log("session fav after " + session.favorite);
+      this.userData.favoriteSessions = this.allSessions.filter(a => a.favorite).map(a => a.sessionId);
+      console.log("session fav count ", this.userData.favoriteSessions.length);    
+      var starCountRef = firebase.database().ref('users/' + this.authService.currentUserInfo.uid);
+      console.log("scr " + starCountRef);
+      starCountRef.child("/favoriteSessions").set(this.userData.favoriteSessions).then(a=>{},b=>{});
+    }
+  }
+
+  promptForLogin() {
+    let prompt = this.alertCtrl.create({
+      title: 'Login',
+      message: "You need to login in order to mark the session as favorites",
+      inputs: [],
+      buttons: [
+        {
+          text: 'Cancel',
+          handler: data => {
+          }
+        },
+        {
+          text: 'Login',
+          handler: data => {
+            this.navCtrl.setRoot(LoginComponent);
+          }
+        }
+      ]
+    });
+    prompt.present();
   }
 
   public openSessionDetails(session: ISession) {
@@ -214,15 +256,11 @@ export class HomePage implements OnDestroy, OnInit {
     this.navCtrl.push(SpeakerDetails, { speaker: speaker })
   }
 
-  public signout() {
-    this.navCtrl.setRoot(LoginComponent, { signout: true });
-  }
-
-  openSchedule(){
+  openSchedule() {
     this.navCtrl.setRoot(HomePage);
   }
 
-  openContact(){
+  openContact() {
     this.navCtrl.push(ContactPage);
   }
 }

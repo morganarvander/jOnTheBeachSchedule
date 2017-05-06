@@ -13,10 +13,6 @@ import { GooglePlus } from '@ionic-native/google-plus';
 })
 export class LoginComponent implements OnInit{
 
-  protected username: string;
-  protected password: string;
-  protected authenticated: boolean = true;
-
   constructor(
     private authService: AuthService,
     private nav: NavController,
@@ -25,21 +21,11 @@ export class LoginComponent implements OnInit{
   ) { }
 
   ngOnInit() {
-    try {
-      this.authenticated = true;
+    try {      
       this.platform.ready().then(() => {
         let doSignOut = this.navParams.get("signout");
         if (doSignOut) {
           this.signout();
-          this.authenticated = false;
-        }
-        else {
-          this.authService.trySilentLogin().subscribe((userData) => {
-            this.nav.setRoot(HomePage);
-          }, (error) => {
-            this.authenticated = false;
-          })
-
         }
       });
     } catch (err) {
@@ -49,16 +35,12 @@ export class LoginComponent implements OnInit{
 
   public login() {
     this.authService.signInWithGoogle().subscribe(userInfo => {
-      console.log("userinfo",userInfo);
-      this.authenticated = userInfo != null;
       this.nav.setRoot(HomePage);
     });
   }
 
   loginWithFacebook() {
     this.authService.signInWithFacebook().subscribe((userInfo) => {
-      console.log("userinfo",userInfo);
-      this.authenticated = userInfo != null;
       this.nav.setRoot(HomePage);
     });
   }

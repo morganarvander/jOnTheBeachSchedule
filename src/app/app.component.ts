@@ -3,7 +3,7 @@ import { AppInsightsInstrumentationKey } from './firebaseConfig';
 import { FirebaseAuthState } from 'angularfire2/auth';
 import { AuthService } from '../auth/authService';
 import { LoginComponent } from '../pages/login/login.component';
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { Nav, Platform } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -14,10 +14,11 @@ import { AppInsightsService } from "ng2-appinsights";
 @Component({
   templateUrl: 'app.html'
 })
-export class MyApp {
+export class MyApp implements OnInit{
+
   @ViewChild(Nav) nav: Nav;
 
-  rootPage: any = LoginComponent;
+  rootPage: any = HomePage;
 
   pages: Array<{ title: string, component: any }>;
 
@@ -45,18 +46,12 @@ export class MyApp {
       this.appinsightsService.flush();
     });
   }
-
-  openPage(page) {
-    this.authService.auth$.subscribe((state: FirebaseAuthState) => {
-      if (state.auth.isAnonymous) {
-        this.nav.setRoot(LoginComponent);
-      }
-      else{
-        this.rootPage = HomePage;
-      }
-    });
+  ngOnInit(): void {
+    this.platform.ready().then(() => {
+      
+    })
   }
-
+  
   openSchedule(){
     this.nav.setRoot(HomePage);
   }
@@ -65,7 +60,11 @@ export class MyApp {
     this.nav.setRoot(ContactPage);
   }
 
-  logout(){
-    this.authService.signOut().subscribe(a=>this.nav.setRoot(LoginComponent));
+  openLogin(){
+    this.nav.setRoot(LoginComponent);
+  }
+
+  logout(){ 
+    this.authService.signOut().subscribe();
   }
 }

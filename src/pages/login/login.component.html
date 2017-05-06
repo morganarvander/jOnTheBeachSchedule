@@ -6,23 +6,18 @@
         <h3>
             Session schedule
         </h3>
-        <h5>Málaga 2017, 17th-19th May</h5>
-        <div *ngIf="authenticated">
-            <p>
-                Authorizing...
-            </p>
-        </div>
-        <div *ngIf="!authenticated" style="text-align: center">
+        <h5>Málaga 2017, 17th-19th May</h5>        
+        <div>
             <p>&nbsp;</p>
             <p>
                 Login using Google or Facebook in order to manage your sessions for the upcoming conference
             </p>
-            <p>
-                <a href="# " (click)="login() "><img src="assets/login/google2.png " /></a>
-            </p>
-            <p>
-                <a href="# " (click)="loginWithFacebook() "><img src="assets/login/facebook.png " /></a>
-            </p>
+            <a href="# " (click)="login() ">
+                <img src="assets/login/google2.png " />
+            </a>
+            <a href="# " (click)="loginWithFacebook() ">
+                <img src="assets/login/facebook.png " />
+            </a>
         </div>
     </div>
     <div class="wave ">

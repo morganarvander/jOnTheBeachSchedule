@@ -5,7 +5,7 @@ import { Inject } from '@angular/core';
 import { FirebaseApp } from 'angularfire2/tokens';
 import { NavController, Platform } from 'ionic-angular';
 import { Observable, Subject } from 'rxjs/Rx';
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { AngularFireAuth, FirebaseAuthState, AngularFire } from 'angularfire2';
 import { GooglePlus } from '@ionic-native/google-plus';
 import { Facebook } from '@ionic-native/facebook';
@@ -19,7 +19,9 @@ export class AuthService {
   private googlePlus:GooglePlus = new GooglePlus();
   private facebook: Facebook = new Facebook();
 
-  public currentUserInfo: { email: string, photoUrl: string, displayName: string, provider: string };
+  public onSignOut = new EventEmitter<any>();
+
+  public currentUserInfo: { email: string, photoUrl: string, displayName: string, provider: string, uid:string };
 
   constructor(
     public auth$: AngularFireAuth,
@@ -32,7 +34,7 @@ export class AuthService {
     });
   }
 
-  trySilentLogin(): Observable<any> {
+  trySilentLogin(): Observable<any> {    
     var result = new Subject();
     return Observable
       .fromPromise(this.storage.get('loginProvider'))
@@ -43,8 +45,8 @@ export class AuthService {
         else if (loginProvider === 'facebook') {
           return this.trySilentFacebookLogin();
         }
-        else {
-          return Observable.throw("no login provider");
+        else {          
+          return FbObservable.fromPromise(firebase.auth().signInAnonymously());
         }
       });
   }
@@ -53,6 +55,7 @@ export class AuthService {
     return Observable
       .fromPromise(this.googlePlus.login({ 'webClientId': webClientId }))
       .switchMap((userData) => {
+        console.log("Made google plus login with " + userData.idToken);
         var provider = firebase.auth.GoogleAuthProvider.credential(userData.idToken);
         return this.performCredentialLogin(provider, 'google');
       });
@@ -72,8 +75,9 @@ export class AuthService {
       });
   }
 
-  performCredentialLogin(credentials, provider: string): Observable<any> {
+  performCredentialLogin(credentials, provider: string): Observable<any> {    
     return FbObservable.fromPromise(firebase.auth().signInWithCredential(credentials)).do(userInfo => {
+      console.log("Performed credential login", userInfo);
       this.currentUserInfo = userInfo;
       this.currentUserInfo.provider = provider;
     });
@@ -115,15 +119,21 @@ export class AuthService {
   }
 
   signOut(): Observable<any> {
-    if (this.currentUserInfo.provider==='google'){
-      return Observable.from(this.googlePlus.logout()).do(()=>this.storage.remove('loginProvider'));
+    if (this.currentUserInfo.provider==='google'){      
+      return Observable.from(this.googlePlus.logout()).do(()=>this.clearInfo());
     }
     else if (this.currentUserInfo.provider==='facebook'){
-      return Observable.from(this.facebook.logout()).do(()=>this.storage.remove('loginProvider'));
+      return Observable.from(this.facebook.logout()).do(()=>this.clearInfo());
     }
     else{
       return Observable.of(null);
     }
+  }
+
+  private clearInfo(){
+    this.storage.remove('loginProvider');
+    this.currentUserInfo = null;
+    this.onSignOut.emit();
   }
 
 }

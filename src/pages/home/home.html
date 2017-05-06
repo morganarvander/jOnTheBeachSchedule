@@ -44,7 +44,9 @@
                 <div>
                     <span class="location">{{session.location}}</span>
                 </div>
-                <ion-icon name='star' item-right padding [ngClass]="{'favorite' : session.favorite}" (click)="markAsFavorite(session)"></ion-icon>
+                
+                <ion-icon name='star' item-right padding class="favorite" *ngIf="session.favorite===true" (click)="markAsFavorite(session)"></ion-icon>
+                <ion-icon name='star' item-right padding  class="" *ngIf="!session.favorite" (click)="markAsFavorite(session)"></ion-icon>
             </ion-item>
 
         </ng-template>

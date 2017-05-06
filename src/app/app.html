@@ -12,6 +12,10 @@
             {{authService.currentUserInfo.displayName}}
             </h3>
         </span>
+        <span *ngIf="!authService.currentUserInfo">
+            You must login in order to save your favorite sessions<br/>
+            <button menuClose ion-button small (click)="openLogin()">Login</button>
+        </span>
     </ion-header>
     <ion-content>
         <ion-list>
@@ -23,7 +27,7 @@
                 <ion-icon name="contact"></ion-icon>&nbsp;
         Contact
       </button>
-            <button menuClose ion-item (click)="logout()">
+            <button menuClose ion-item (click)="logout()" *ngIf="authService.currentUserInfo">
                 <ion-icon name="exit"></ion-icon>&nbsp;
         Logout
       </button>
