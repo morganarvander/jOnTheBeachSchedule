@@ -1,6 +1,6 @@
 <ion-header>
     <ion-navbar>
-        <ion-buttons start>            
+        <ion-buttons start>
         </ion-buttons>
         <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
@@ -12,10 +12,13 @@
 
     <div padding>
         <ion-segment [(ngModel)]="sessionDay">
-            <ion-segment-button value="18th">
+            <ion-segment-button value="2017-05-17">
+                Wednesday
+            </ion-segment-button>
+            <ion-segment-button value="2017-05-18">
                 Thursday
             </ion-segment-button>
-            <ion-segment-button value="19th">
+            <ion-segment-button value="2017-05-19">
                 Friday
             </ion-segment-button>
         </ion-segment>
@@ -28,25 +31,26 @@
     </div>
 </ion-header>
 <ion-content class="page-home">
-    <ion-list>
+    <ion-list *ngIf="currentSessions">
         <ng-template ngFor [ngForOf]="currentSessions" let-timeSessions>
             <ion-list-header>
-                {{timeSessions.time}}
+                {{timeSessions.startTime}}
             </ion-list-header>
-            <ion-item *ngFor="let session of timeSessions.sessions">
-                <ion-avatar item-left (click)="openSpeakerDetails(speakers[session.speakerId])">
-                    <img [src]="'https://jonthebeach.com/' + speakers[session.speakerId]?.imageUrl" />
+            <ion-item *ngFor="let session of timeSessions.sessions" class="session">
+                <ion-avatar item-left (click)="openSpeakerDetails(allSpeakers[session.speakerId])">
+                    <img *ngIf="allSpeakers[session.speakerId]" [src]="'https://jonthebeach.com/' + allSpeakers[session.speakerId].imageUrl" />
+                    <img *ngIf="!allSpeakers[session.speakerId] && session.workshopTitle" src="./assets/workshop_grey.png" />
+                    <img *ngIf="!allSpeakers[session.speakerId] && !session.workshopTitle" src="./assets/logo.png" />
                 </ion-avatar>
-                <h2 [innerHTML]="session.title" (click)="openSessionDetails(session)"></h2>
-                <h3 [innerHTML]="speakers[session.speakerId]?.name">
+                <h2 [innerHTML]="session.workshopTitle ? session.workshopTitle : session.title" (click)="openSessionDetails(session)"></h2><span *ngIf="firebaseHandler.settings.canRate && session.averageRating>0">( <ion-icon name='star' class="ratingStar"></ion-icon>{{session.averageRating}} )</span>
+                <h3 *ngIf="allSpeakers[session.speakerId]" [innerHTML]="allSpeakers[session.speakerId].name">
                 </h3>
                 <p [innerHTML]="session.description" (click)="openSessionDetails(session)"></p>
                 <div>
                     <span class="location">{{session.location}}</span>
                 </div>
-                
-                <ion-icon name='star' item-right padding class="favorite" *ngIf="session.favorite===true" (click)="markAsFavorite(session)"></ion-icon>
-                <ion-icon name='star' item-right padding  class="" *ngIf="!session.favorite" (click)="markAsFavorite(session)"></ion-icon>
+                <ion-icon name='heart' item-right padding class="favorite" *ngIf="session.favorite===true" (click)="markAsFavorite(session)"></ion-icon>
+                <ion-icon name='heart-outline' item-right padding class="" *ngIf="!session.favorite" (click)="markAsFavorite(session)"></ion-icon>
             </ion-item>
 
         </ng-template>

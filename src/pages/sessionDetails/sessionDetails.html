@@ -11,14 +11,63 @@
 <ion-content padding>
     <ion-item>
         <ion-avatar item-left (click)="openSpeakerDetails(speaker)">
-            <img [src]="'https://jonthebeach.com/' + speaker.imageUrl" style="float:left" />
+            <img [src]="'https://jonthebeach.com/' + speaker.imageUrl" style="float:left" *ngIf="speaker" />
+            <img src="./assets/logo.png" style="float:left" *ngIf="!speaker" />
         </ion-avatar>
         <h2>{{session.location}} {{session.time}}</h2>
-        <h3>{{speaker.name}}</h3>
-        <ion-icon name='star' item-right padding [ngClass]="{'favorite' : session.favorite}" (click)="markAsFavorite(session)"></ion-icon>
+        <h3 *ngIf="speaker">{{speaker.name}}</h3>
+        <ion-icon name='heart' item-right padding class="favorite" *ngIf="session.favorite===true" (click)="markAsFavorite(session)"></ion-icon>
+        <ion-icon name='heart-outline' item-right padding class="" *ngIf="!session.favorite" (click)="markAsFavorite(session)"></ion-icon>
     </ion-item>
-    <h4>
-        <p [innerHTML]="session.title"></p>
-    </h4>
-    <p [innerHTML]="session.description"></p>
+    <div padding>
+        <h4 *ngIf="session.title" [innerHTML]="session.title">
+        </h4>
+        <h4 *ngIf="session.workshopTitle" [innerHTML]="session.workshopTitle">
+        </h4>
+        <div>
+            <p *ngIf="session.description" [innerHTML]="session.description"></p>
+            <p *ngIf="!session.description">No further information availible</p>
+        </div>
+    </div>
+    <ion-item class="rating-item" *ngIf="fireBaseHandler.settings.canRate && speaker">
+        <label>Rate this session</label><br/>
+        <rating [ngModel]="customerRating" (ngModelChange)="rate($event)" readonly="false" max="5" emptyStarIconName="star-outline" halfStarIconName="star-half" starIconName="star" nullable="true">
+        </rating>
+        <div *ngIf="session.avgerageRating" class="averageRating">({{session.averageRating}})</div>
+    </ion-item>
+    <ion-item *ngIf="comments">
+        <h3>Comments</h3>
+    </ion-item>
+    <ion-item *ngFor="let comment of comments">
+        <ion-avatar item-left>
+            <img [src]="comment.userInfo.photoUrl" />
+        </ion-avatar>
+        <h3>{{comment.userInfo.displayName}} {{comment.userInfo.email}}</h3>
+        <p>
+            {{comment.comment}}
+        </p>
+    </ion-item>
 </ion-content>
+<ion-footer padding *ngIf="fireBaseHandler.settings.canComment && speaker">
+
+    <label>Comment : </label>
+    <table padding>
+        <tr>
+            <td>
+                <!--
+                <button ion-button color="royal" style="order:1" round>
+                <ion-icon name="thumbs-up"></ion-icon>                
+                </button>
+                -->
+            </td>
+            <td width="100%">
+                <ion-textarea class="commentArea" #commentArea [ngModel]="commentText"></ion-textarea>
+            </td>
+            <td>
+                <button ion-button color="royal" clear class="sendButton" (click)="addComment()">
+                <ion-icon name="send"></ion-icon><br>                
+            </button>
+            </td>
+        </tr>
+    </table>
+</ion-footer>

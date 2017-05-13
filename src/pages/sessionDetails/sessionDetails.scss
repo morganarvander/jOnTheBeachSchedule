@@ -9,6 +9,59 @@ h2 {
     min-height: 2.5rem;
 }
 
+h4 {
+    font-size: 140%;
+    font-weight: bold;
+}
+
+p {
+    // padding-top: 1rem;
+    font-size: 110%;
+}
+
 .favorite {
     color: red;
+}
+
+ul {
+    padding: 0px;
+    &.rating li {
+        padding: 5px 10px !important;
+        background: none;
+        color: #ffb400;
+        ion-icon {
+            font-size: 30px;
+        }
+    }
+}
+
+.averageRating {
+    display: inline;
+    height: 100%;
+    top: -0.4rem;
+    position: relative;
+    font-size: 115%;
+}
+
+rating {
+    display: inline-block;
+}
+
+label {
+    font-size: 100%;
+    white-space: nowrap;
+}
+
+.commentArea {
+    font-size: 120%;
+    border: solid 1px #888;
+    background: #f8f8f8;
+}
+
+.sendButton {
+    font-size: 150%;
+}
+
+ion-icon[name='heart-outline'] {
+    color: lightgrey;
 }

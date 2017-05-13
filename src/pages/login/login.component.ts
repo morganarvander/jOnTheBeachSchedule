@@ -1,11 +1,7 @@
-import { FirebaseSdkAuthBackend } from 'angularfire2/auth';
-import { FirebaseApp } from 'angularfire2/tokens';
 import { HomePage } from '../home/home';
 import { NavController, NavParams, Platform } from 'ionic-angular';
 import { AuthService } from '../../auth/authService';
 import { Component, OnInit } from '@angular/core';
-import { FirebaseAuthState } from "angularfire2";
-import { GooglePlus } from '@ionic-native/google-plus';
 
 @Component({
   selector: 'login',

@@ -22,3 +22,21 @@ ion-label p {
 .location {
     color: #de6305;
 }
+
+.session h2 {
+    white-space: normal;
+}
+
+.session {
+    h2 {
+        display: inline;
+    }
+}
+
+.ratingStar {
+    color: #ffb400;
+}
+
+ion-icon[name='heart-outline'] {
+    color: lightgrey;
+}

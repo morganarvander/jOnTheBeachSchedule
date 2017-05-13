@@ -1,5 +1,6 @@
+import { FirebaseHandler } from '../firebaseHandler';
+import { Logger } from '../logger';
 import { ContactPage } from '../pages/contact/contact.component';
-import { FirebaseApp } from 'angularfire2/tokens';
 import { SpeakerDetails } from '../pages/speakerDetails/speakerDetails.component';
 import { SessionDetails } from '../pages/sessionDetails/sessionDetails';
 import { AuthService } from '../auth/authService';
@@ -18,9 +19,10 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { AngularFireModule } from 'angularfire2';
 import { firebaseConfig } from "./firebaseConfig";
 
-import { FIREBASE_PROVIDERS, defaultFirebase } from 'angularfire2';
+import { FIREBASE_PROVIDERS } from 'angularfire2';
 import { AppInsightsModule } from 'ng2-appinsights';
 import { IonicStorageModule } from "@ionic/storage";
+import { Ionic2RatingModule } from 'ionic2-rating';
 
 @NgModule({
   declarations: [
@@ -33,10 +35,11 @@ import { IonicStorageModule } from "@ionic/storage";
   ],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(MyApp),        
+    IonicModule.forRoot(MyApp),
     IonicStorageModule.forRoot(),
     AngularFireModule.initializeApp(firebaseConfig),
-    AppInsightsModule
+    AppInsightsModule,
+    Ionic2RatingModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -51,8 +54,10 @@ import { IonicStorageModule } from "@ionic/storage";
     FIREBASE_PROVIDERS,
     StatusBar,
     SplashScreen,
-    {provide: ErrorHandler, useClass: IonicErrorHandler},
-    AuthService    
+    { provide: ErrorHandler, useClass: IonicErrorHandler },
+    AuthService,
+    Logger,
+    FirebaseHandler
   ]
 })
-export class AppModule {}
+export class AppModule { }

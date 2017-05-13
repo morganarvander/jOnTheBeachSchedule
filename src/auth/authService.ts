@@ -1,10 +1,10 @@
+import { IUserData } from '../models';
 import { FbObservable } from '../fbObservable';
 import { webClientId } from '../app/firebaseConfig';
-import { LoginComponent } from '../pages/login/login.component';
 import { Inject } from '@angular/core';
 import { FirebaseApp } from 'angularfire2/tokens';
-import { NavController, Platform } from 'ionic-angular';
-import { Observable, Subject } from 'rxjs/Rx';
+import { Platform } from 'ionic-angular';
+import { Observable } from 'rxjs/Rx';
 import { Injectable, EventEmitter } from '@angular/core';
 import { AngularFireAuth, FirebaseAuthState, AngularFire } from 'angularfire2';
 import { GooglePlus } from '@ionic-native/google-plus';
@@ -15,27 +15,19 @@ import firebase from 'firebase'; //needed for the GoogleAuthProvider
 @Injectable()
 export class AuthService {
   userProfile: any;
-  private authState: FirebaseAuthState;
   private googlePlus:GooglePlus = new GooglePlus();
   private facebook: Facebook = new Facebook();
 
   public onSignOut = new EventEmitter<any>();
 
-  public currentUserInfo: { email: string, photoUrl: string, displayName: string, provider: string, uid:string };
+  public currentUserInfo: { email: string, photoUrl: string, displayName: string, provider: string, uid:string, anonymous : boolean };
 
   constructor(
-    public auth$: AngularFireAuth,
-    private af: AngularFire,
     private storage: Storage,
-    @Inject(FirebaseApp) private firebase: any,
     private platform: Platform) {
-    auth$.subscribe((state: FirebaseAuthState) => {
-      this.authState = state;
-    });
   }
 
-  trySilentLogin(): Observable<any> {    
-    var result = new Subject();
+  trySilentLogin(): Observable<IUserData> {    
     return Observable
       .fromPromise(this.storage.get('loginProvider'))
       .switchMap((loginProvider) => {
@@ -46,12 +38,17 @@ export class AuthService {
           return this.trySilentFacebookLogin();
         }
         else {          
-          return FbObservable.fromPromise(firebase.auth().signInAnonymously());
+          return Observable.of({
+            favoriteSessions :[],
+            uid : "-1",
+            anonymous : true,
+          } as IUserData);
+         // return FbObservable.fromPromise(firebase.auth().signInAnonymously());
         }
       });
   }
 
-  trySilentGoogleLogin(): Observable<any> {
+  trySilentGoogleLogin(): Observable<IUserData> {
     return Observable
       .fromPromise(this.googlePlus.login({ 'webClientId': webClientId }))
       .switchMap((userData) => {
@@ -61,7 +58,7 @@ export class AuthService {
       });
   }
 
-  trySilentFacebookLogin(): Observable<any> {
+  trySilentFacebookLogin(): Observable<IUserData> {
     return Observable.fromPromise(this.facebook.getLoginStatus())
       .switchMap(currentLoginResponse => {
         if (currentLoginResponse.authResponse && currentLoginResponse.authResponse.accessToken) {
@@ -75,7 +72,7 @@ export class AuthService {
       });
   }
 
-  performCredentialLogin(credentials, provider: string): Observable<any> {    
+  performCredentialLogin(credentials, provider: string): Observable<IUserData> {    
     return FbObservable.fromPromise(firebase.auth().signInWithCredential(credentials)).do(userInfo => {
       console.log("Performed credential login", userInfo);
       this.currentUserInfo = userInfo;

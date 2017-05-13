@@ -1,6 +1,5 @@
 import { ContactPage } from '../pages/contact/contact.component';
 import { AppInsightsInstrumentationKey } from './firebaseConfig';
-import { FirebaseAuthState } from 'angularfire2/auth';
 import { AuthService } from '../auth/authService';
 import { LoginComponent } from '../pages/login/login.component';
 import { Component, ViewChild, OnInit } from '@angular/core';
@@ -48,7 +47,7 @@ export class MyApp implements OnInit{
   }
   ngOnInit(): void {
     this.platform.ready().then(() => {
-      
+      this.authService.trySilentLogin().subscribe();
     })
   }
   

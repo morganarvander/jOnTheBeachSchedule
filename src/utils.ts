@@ -9,3 +9,11 @@ export const parseTime = (timeStr: string) => {
   d.setMinutes(parseInt(time[2]) || 0);
   return d;
 }
+
+export const keyValuesToObject = (a: any[]): any => {
+  var result = {};
+  a.forEach(b=>{
+    result[b.$key] = b.$value;
+  })
+  return result;
+}
