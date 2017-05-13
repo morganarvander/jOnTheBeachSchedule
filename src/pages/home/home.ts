@@ -161,7 +161,9 @@ export class HomePage implements OnDestroy, OnInit {
   }
 
   public openSpeakerDetails(speaker: ISpeaker) {
-    this.navCtrl.push(SpeakerDetails, { speaker: speaker })
+    if (speaker!=null){
+      this.navCtrl.push(SpeakerDetails, { speaker: speaker })
+    }
   }
 
   openSchedule() {

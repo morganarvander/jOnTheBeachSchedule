@@ -35,39 +35,4 @@
         </rating>
         <div *ngIf="session.avgerageRating" class="averageRating">({{session.averageRating}})</div>
     </ion-item>
-    <ion-item *ngIf="comments">
-        <h3>Comments</h3>
-    </ion-item>
-    <ion-item *ngFor="let comment of comments">
-        <ion-avatar item-left>
-            <img [src]="comment.userInfo.photoUrl" />
-        </ion-avatar>
-        <h3>{{comment.userInfo.displayName}} {{comment.userInfo.email}}</h3>
-        <p>
-            {{comment.comment}}
-        </p>
-    </ion-item>
 </ion-content>
-<ion-footer padding *ngIf="fireBaseHandler.settings.canComment && speaker">
-
-    <label>Comment : </label>
-    <table padding>
-        <tr>
-            <td>
-                <!--
-                <button ion-button color="royal" style="order:1" round>
-                <ion-icon name="thumbs-up"></ion-icon>                
-                </button>
-                -->
-            </td>
-            <td width="100%">
-                <ion-textarea class="commentArea" #commentArea [ngModel]="commentText"></ion-textarea>
-            </td>
-            <td>
-                <button ion-button color="royal" clear class="sendButton" (click)="addComment()">
-                <ion-icon name="send"></ion-icon><br>                
-            </button>
-            </td>
-        </tr>
-    </table>
-</ion-footer>

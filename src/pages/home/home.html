@@ -42,7 +42,8 @@
                     <img *ngIf="!allSpeakers[session.speakerId] && session.workshopTitle" src="./assets/workshop_grey.png" />
                     <img *ngIf="!allSpeakers[session.speakerId] && !session.workshopTitle" src="./assets/logo.png" />
                 </ion-avatar>
-                <h2 [innerHTML]="session.workshopTitle ? session.workshopTitle : session.title" (click)="openSessionDetails(session)"></h2><span *ngIf="firebaseHandler.settings.canRate && session.averageRating>0">( <ion-icon name='star' class="ratingStar"></ion-icon>{{session.averageRating}} )</span>
+                <h2 [innerHTML]="session.workshopTitle ? session.workshopTitle : session.title" (click)="openSessionDetails(session)"></h2>
+                <span *ngIf="firebaseHandler.settings.canRate && session.averageRating>0">( <ion-icon name='star' class="ratingStar"></ion-icon>{{session.averageRating}} )</span>
                 <h3 *ngIf="allSpeakers[session.speakerId]" [innerHTML]="allSpeakers[session.speakerId].name">
                 </h3>
                 <p [innerHTML]="session.description" (click)="openSessionDetails(session)"></p>

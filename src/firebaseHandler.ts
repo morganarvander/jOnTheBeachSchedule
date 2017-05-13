@@ -44,7 +44,6 @@ export class FirebaseHandler {
     private setupSubscriptions() {
         this.subscribeToSettings();
         this.startAuthSubscription();
-      //  this.subscribeToSessions();
         this.subscribeToSessionsV2();
         this.subscribeToSpeakers();
         this.subscribeToRatings();
@@ -61,19 +60,6 @@ export class FirebaseHandler {
             this.logger.log("FireBase.auth", { uid: state.uid });
         });
     }
-
-    /* Retrives all sessions from server */
-    private subscribeToSessions(): Subscription {
-        return this.af.database.list("sessions_v2").subscribe((sessions: ISession[]) => {
-            //Pre-process sessions
-            //this.extractTimeParts(sessions);
-            this.sessions = sessions;
-            if (sessions) {
-                this.onSessions.emit(sessions);
-            }
-        });
-    }
-
     
     /* Parses a datestring like 08:00-09:00 into two separate Date objects */
     private extractTimeParts(sessions: ISession[]) {
@@ -84,18 +70,19 @@ export class FirebaseHandler {
         });
     }
 
+    private adjustSessionId(sessions : ISession[], index : number){
+        sessions.forEach(session=>{
+            session.sessionId = `${index}-${session.sessionId}`;
+        });
+    }
+
     /* Retrives all sessions from server */
     private subscribeToSessionsV2(): Subscription {
         return this.af.database.list("sessions_v2").subscribe((fbSessions) => {
-            this.logger.log("got v2 sessions", fbSessions);
-
-            //Pre-process sessions
-            /*
-            this.extractTimeParts(sessions);
-            */
             this.sessions = [];
-            fbSessions.forEach(sessions=>{
+            fbSessions.forEach((sessions,index)=>{                
                 this.sessions = [...this.sessions,...sessions];
+                this.adjustSessionId(sessions,index);
                 this.extractTimeParts(sessions);
             });      
             if (this.sessions) {
@@ -153,7 +140,7 @@ export class FirebaseHandler {
                     let totalRating = 0;
                     let ratingCount = 0;
                     for (var prop in a) {
-                        if (a.hasOwnProperty(prop)) {
+                        if (a.hasOwnProperty(prop) && a[prop]>0) {
                             totalRating += a[prop];
                             ratingCount++;
                         }
