@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<widget id="se.crosscut.jonthebeach" version="1.1.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-  <name>jOnTheBeach Schedule</name>
+<widget id="se.crosscut.malagasessions" version="1.1.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+  <name>Malaga sessions</name>
   <description>Schedule for the jOnTheBeach conference in Malaga 2017.</description>
   <author email="morgan.arvander@crosscut.se" href="http://www.crosscut.se/">Crosscut Solutions AB</author>
   <content src="index.html"/>
