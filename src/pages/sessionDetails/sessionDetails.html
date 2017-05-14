@@ -14,7 +14,7 @@
             <img [src]="'https://jonthebeach.com/' + speaker.imageUrl" style="float:left" *ngIf="speaker" />
             <img src="./assets/logo.png" style="float:left" *ngIf="!speaker" />
         </ion-avatar>
-        <h2>{{session.location}} {{session.time}}</h2>
+        <h2>{{session.location}}</h2><h2>{{session.time}}</h2>
         <h3 *ngIf="speaker">{{speaker.name}}</h3>
         <ion-icon name='heart' item-right padding class="favorite" *ngIf="session.favorite===true" (click)="markAsFavorite(session)"></ion-icon>
         <ion-icon name='heart-outline' item-right padding class="" *ngIf="!session.favorite" (click)="markAsFavorite(session)"></ion-icon>

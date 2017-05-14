@@ -10,10 +10,26 @@ ion-label p {
     max-height: 2rem;
 }
 
+.speakerName{
+    color:#444;
+}
+.ios{
+    h2, h3, span, p{
+        font-size: 80%;
+    }
+    h2{
+        font-weight: 500;
+    }
+    .description{
+        display: none;
+    }
+}
+
 .favoriteIcon {
     color: #c7c7c7;
     font-size: 120%;
 }
+
 
 .favorite {
     color: #de6305;

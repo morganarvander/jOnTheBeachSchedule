@@ -1,6 +1,5 @@
 import { FirebaseHandler } from '../../firebaseHandler';
 import { Logger } from '../../logger';
-import { SessionBuilder } from './sessionBuilder';
 import { ContactPage } from '../contact/contact.component';
 import { LoginComponent } from '../login/login.component';
 import { SpeakerDetails } from '../speakerDetails/speakerDetails.component';
@@ -125,8 +124,12 @@ export class HomePage implements OnDestroy, OnInit {
       this.promptForLogin();
     }
     else {
-      var userData = this.sessionBuilder.markAsFavorite(session);
-      this.firebaseHandler.markAsFavorite(userData);
+      try{
+        var userData = this.sessionBuilder.markAsFavorite(session);
+        this.firebaseHandler.markAsFavorite(userData);
+      }catch(err){
+        console.log(err);
+      }
     }
   }
 

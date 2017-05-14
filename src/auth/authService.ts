@@ -52,7 +52,6 @@ export class AuthService {
     return Observable
       .fromPromise(this.googlePlus.login({ 'webClientId': webClientId }))
       .switchMap((userData) => {
-        console.log("Made google plus login with " + userData.idToken);
         var provider = firebase.auth.GoogleAuthProvider.credential(userData.idToken);
         return this.performCredentialLogin(provider, 'google');
       });
@@ -74,7 +73,6 @@ export class AuthService {
 
   performCredentialLogin(credentials, provider: string): Observable<IUserData> {    
     return FbObservable.fromPromise(firebase.auth().signInWithCredential(credentials)).do(userInfo => {
-      console.log("Performed credential login", userInfo);
       this.currentUserInfo = userInfo;
       this.currentUserInfo.provider = provider;
     });

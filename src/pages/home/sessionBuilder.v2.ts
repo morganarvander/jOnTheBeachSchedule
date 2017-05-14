@@ -28,8 +28,12 @@ export class SessionBuilderV2 {
             this.allSessions = sessions;
             this.buildSessions();
         });        
-        firebaseHandler.subscribeOnUserAuth((userData) => 
-            this.setUserData(userData)
+        firebaseHandler.subscribeOnUserAuth((userData) =>{ 
+                console.log("setting userData : " + userData);
+                if (userData!=null){
+                    this.setUserData(userData)
+                }
+            }
         );        
     }
 
@@ -50,7 +54,12 @@ export class SessionBuilderV2 {
     /* Marks a session as a favorite and updates the server accordingly */
     public markAsFavorite(session: ISession): IUserData {
         session.favorite = !session.favorite ? true : false;
-        this.userData.favoriteSessions = this.allSessions.filter(a => a.favorite).map(a => a.sessionId);
+        try{
+            this.userData.favoriteSessions = this.allSessions.filter(a => a.favorite).map(a => a.sessionId);
+        }catch (err)
+        {
+            console.log(err);
+        }
         return this.userData;
     }
     

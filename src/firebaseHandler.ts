@@ -57,6 +57,7 @@ export class FirebaseHandler {
             this.getUserData(state.uid).subscribe(data =>
                 this.onUserAuth.emit(data)
             );
+            console.log("Logged in using " + state.uid);
             this.logger.log("FireBase.auth", { uid: state.uid });
         });
     }
@@ -65,8 +66,7 @@ export class FirebaseHandler {
     private extractTimeParts(sessions: ISession[]) {
         sessions.forEach((session) => {
             var timeParts = session.time.split("-");
-            session.startTime = parseTime(timeParts[0]);
-            session.endTime = parseTime(timeParts[1]);
+            session.time = timeParts[0].substring(0,5) + " - " + timeParts[1].substring(0,5);     
         });
     }
 
@@ -154,7 +154,14 @@ export class FirebaseHandler {
     /* Marks a session as a favorite and updates the server accordingly */
     public markAsFavorite(userData: IUserData) {
         var starCountRef = firebase.database().ref('users/' + this.authService.currentUserInfo.uid);
-        starCountRef.child("/favoriteSessions").set(userData.favoriteSessions).then(a => { }, b => { });
+        try{
+            starCountRef.child("/favoriteSessions").set(userData.favoriteSessions).then(a => { 
+        }, b => {
+            console.log("db failed updating favorites");
+        });
+        }catch(err){
+            console.log("error updating star " + err);
+        }
     }
 
     public addComment(comment: string, session: ISession) {

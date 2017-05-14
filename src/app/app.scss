@@ -14,5 +14,7 @@
 // automatically applied to the <body> element in the app.
 $font-family-base: ("Arial", -apple-system, "Helvetica Neue", "Roboto", sans-serif) !default;
 p {
-    font-size: 120%;
+    font-size: 100%;
 }
+
+$font-size-ios-base : 10px !default; 

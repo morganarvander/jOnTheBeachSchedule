@@ -7,7 +7,7 @@ export const parseTime = (timeStr: string) => {
   var time = timeStr.match(/(\d+)(?::(\d\d))?\s*(p?)/);
   d.setHours(parseInt(time[1]) + (time[3] ? 12 : 0));
   d.setMinutes(parseInt(time[2]) || 0);
-  return d;
+  return d;     
 }
 
 export const keyValuesToObject = (a: any[]): any => {
