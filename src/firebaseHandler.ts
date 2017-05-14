@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FbObservable } from './fbObservable';
-import { keyValuesToObject, parseTime } from './utils';
+import { keyValuesToObject } from './utils';
 import { Observable, Subscription } from 'rxjs/Rx';
 import { Logger } from './logger';
 import { EventEmitter } from '@angular/core';

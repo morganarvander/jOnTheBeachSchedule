@@ -2,14 +2,11 @@ import { EventEmitter } from '@angular/core';
 import { FirebaseHandler } from '../../firebaseHandler';
 import { from } from 'linq';
 import { IDateSessions, ISession, IUserData } from '../../models';
-import { parseTimeInterval, parseTime } from '../../utils';
+import { parseTimeInterval } from '../../utils';
 
 export class SessionBuilderV2 {
-    visiblityPredicate: (session: ISession) => boolean;
-
+    private visiblityPredicate: (session: ISession) => boolean;
     private allSessions: ISession[];
-
-    private fbSessions:any;
 
     public onSessionsBuilt = new EventEmitter<IDateSessions[]>();
     public visibleSessions: {
